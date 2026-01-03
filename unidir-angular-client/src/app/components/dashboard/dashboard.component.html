@@ -1,0 +1,13 @@
+<div class="dashboard-container">
+  <div *ngIf="userData">
+    <h1>Welcome, {{ userData.email }}</h1>
+
+    <div class="dashboard-card">
+      <h3>Your Access Token:</h3>
+      <code>{{ accessToken }}</code>
+    </div>
+    <div class="success-box">
+      <button class="btn-secondary" (click)="onLogout()">Logout</button>
+    </div>
+  </div>
+</div>

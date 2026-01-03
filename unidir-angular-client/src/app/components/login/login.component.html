@@ -1,0 +1,19 @@
+<div class="login-container">
+  <div class="login-card">
+    <h1>UniDir Portal</h1>
+
+    <div *ngIf="!(auth.isAuthenticated$ | async); else loggedIn">
+      <p>Please sign in to access your dashboard and workspace.</p>
+      <button class="btn-primary" (click)="onLogin()">
+        Sign in with UniDir
+      </button>
+    </div>
+
+    <ng-template #loggedIn>
+      <div class="success-box">
+        <p>You are currently signed in.</p>
+        <button class="btn-secondary" (click)="auth.logout()">Logout</button>
+      </div>
+    </ng-template>
+  </div>
+</div>
