@@ -27,7 +27,7 @@ export const UniDirProvider = ({ children, config }) => {
           window.history.replaceState(
             {},
             document.title,
-            window.location.pathname
+            window.location.pathname,
           );
         }
 
@@ -37,11 +37,13 @@ export const UniDirProvider = ({ children, config }) => {
         // const refreshToken = await client.getRefreshToken();
         const idToken = await client.getIdToken();
         const expireAt = await client.getExpireAt();
-        console.log("idToken", idToken, expireAt);
+        const jkt = await client.getJKT();
+        console.log("idToken", idToken, expireAt, jkt);
         if (accessToken) {
           setIsAuthenticated(true);
+          const { sub, name, email, picture, email_verified, role } = idToken;
           // In a real app, you'd decode the ID Token or call a /userinfo endpoint
-          setUser({ email: idToken.email, name: idToken.displayName });
+          setUser({ sub, name, email, picture, email_verified, role, jkt });
         }
       } catch (err) {
         console.error("Authentication initialization failed:", err);

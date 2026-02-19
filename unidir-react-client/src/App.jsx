@@ -30,6 +30,20 @@ function App() {
               <strong>Email:</strong> {user.email}
             </p>
             <p>You are successfully logged in using your UniDir SDK.</p>
+            {user.jkt ? (
+              <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded">
+                <p className="font-semibold text-green-700">✓ DPoP Bound</p>
+                <p className="text-xs text-green-600 break-all">
+                  JKT: {user.jkt}
+                </p>
+              </div>
+            ) : (
+              <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded">
+                <p className="font-semibold text-yellow-700">
+                  ⚠ Bearer Token (No DPoP)
+                </p>
+              </div>
+            )}
           </div>
         </main>
       </div>

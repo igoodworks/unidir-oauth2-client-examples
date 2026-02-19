@@ -23,6 +23,7 @@ const unidirConfig = {
   jwksUrl: import.meta.env.VITE_UNIDIR_JWKS,
   deviceId: getDeviceId(),
   scope: import.meta.env.VITE_UNIDIR_SCOPE,
+  useDPoP: true,
 };
 
 // Modern React 18 rendering pattern
@@ -33,5 +34,5 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <App />
       </div>
     </UniDirProvider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );
