@@ -1,6 +1,6 @@
 "use client";
-// /import { getDeviceId } from "@unidir/unidir-nextjs";
-import { getDeviceId } from "../../../unidir-nextjs/src/client";
+import { getDeviceId } from "@unidir/unidir-nextjs/client";
+//import { getDeviceId } from "../../../unidir-nextjs/src/client";
 
 export default function LoginButton() {
   const handleLogin = () => {

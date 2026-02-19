@@ -1,5 +1,7 @@
-//import { UserProvider } from "@unidir/unidir-nextjs";
-import { UserProvider } from "../../../unidir-nextjs/src/client";
+"use client";
+
+import { UserProvider } from "@unidir/unidir-nextjs/client";
+//import { UserProvider } from "../../../unidir-nextjs/src/client";
 import Link from "next/link"; // 1. Import the Link component
 import "./globals.css";
 import { config } from "@/lib/unidir";

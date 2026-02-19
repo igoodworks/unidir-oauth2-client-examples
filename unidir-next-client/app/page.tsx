@@ -1,8 +1,8 @@
 "use client";
 
 import LoginButton from "@/components/LoginButton";
-//import { useUser } from "@unidir/unidir-nextjs";
-import { useUser } from "../../../unidir-nextjs/src/client";
+import { useUser } from "@unidir/unidir-nextjs/client";
+//import { useUser } from "../../../unidir-nextjs/src/client";
 import Link from "next/link";
 
 export default function HomePage() {

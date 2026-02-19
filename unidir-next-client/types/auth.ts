@@ -7,4 +7,5 @@ export interface UniDirUser {
   email_verified?: boolean;
   // Add custom claims if you configured them in UniDir
   role?: string;
+  jkt?: string; // DPoP Thumbprint
 }
