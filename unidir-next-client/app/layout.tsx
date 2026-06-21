@@ -12,8 +12,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className="bg-gray-50">
+    <html lang="en" className="light">
+      <body className="bg-gray-50 text-gray-900 font-sans min-h-screen">
         <UserProvider config={config}>
           <nav className="p-4 bg-white shadow-sm flex gap-4">
             {/* 2. Replace <a> with <Link> */}

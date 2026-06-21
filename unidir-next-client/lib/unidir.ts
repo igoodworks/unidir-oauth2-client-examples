@@ -16,6 +16,10 @@ export const config = {
   secret: process.env.UNIDIR_SECRET!,
   redirectUri: process.env.UNIDIR_REDIRECT_URI!,
   useDPoP: true,
+  session: {
+    cookieName: "unidir_mysession",
+    saveAccessToken: true,
+  },
   /*
   ////////////////////////////////////////////
   default: save session information in cookie.
@@ -28,7 +32,6 @@ export const config = {
         return s ? JSON.parse(s.data) : null;
       },
       set: async (id: string, data: UniDirTokenSet, maxAge: number) => {
-        console.log("data", data);
         await prisma.session.create({
           data: { id, data: JSON.stringify(data) }
         });

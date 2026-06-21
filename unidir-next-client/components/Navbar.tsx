@@ -9,7 +9,7 @@ export default function Navbar() {
   const { user, isLoading } = useUser();
 
   if (isLoading) return <nav className="p-4">Loading...</nav>;
-  console.log("user", user);
+
   return (
     <nav className="p-4 bg-white shadow-sm flex gap-4">
       <Link href="/" className="hover:text-blue-600">

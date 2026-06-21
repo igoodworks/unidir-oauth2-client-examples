@@ -1,18 +1,49 @@
-<div class="login-container">
+<div class="app-container">
   <div class="login-card">
-    <h1>UniDir Portal</h1>
-
+    <h1>MCPUniDir Direct Login</h1>
+    
     <div *ngIf="!(auth.isAuthenticated$ | async); else loggedIn">
-      <p>Please sign in to access your dashboard and workspace.</p>
-      <button class="btn-primary" (click)="onLogin()">
-        Sign in with UniDir
-      </button>
+      <p>Sign in via the background authentication flow.</p>
+      
+      <form (ngSubmit)="onDirectLogin()" class="login-form">
+        <input 
+          type="email" 
+          name="email" 
+          [(ngModel)]="email" 
+          required 
+          placeholder="Email (john.doe@goodwork.com)" 
+          class="form-input"
+        />
+        <input 
+          type="password" 
+          name="password" 
+          [(ngModel)]="password" 
+          required 
+          placeholder="Password" 
+          class="form-input"
+        />
+        <button type="submit" class="btn-primary">
+          Sign In Directly
+        </button>
+      </form>
+
+      <div *ngIf="errorMessage" class="error-msg">
+        {{ errorMessage }}
+      </div>
+
+      <div class="hosted-ui-section">
+        <p>Or use the standard hosted UI:</p>
+        <button class="btn-secondary" (click)="onHostedLogin()">
+          Sign in with Hosted UI
+        </button>
+      </div>
     </div>
 
     <ng-template #loggedIn>
-      <div class="success-box">
-        <p>You are currently signed in.</p>
-        <button class="btn-secondary" (click)="auth.logout()">Logout</button>
+      <div>
+        <h2>Welcome Back!</h2>
+        <p>You are successfully logged in using your UniDir SDK.</p>
+        <button class="btn-secondary" style="margin-top: 20px" (click)="auth.logout()">Logout</button>
       </div>
     </ng-template>
   </div>

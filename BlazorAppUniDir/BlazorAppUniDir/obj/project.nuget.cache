@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "5/d41g+uRLU=",
+  "success": true,
+  "projectFilePath": "c:\\0.iGoodWorks\\gw-undir-workspace\\gw-unidir-npm\\client-examples\\BlazorAppUniDir\\BlazorAppUniDir\\BlazorAppUniDir.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\trust\\.nuget\\packages\\microsoft.aspnetcore.app.internal.assets\\10.0.9\\microsoft.aspnetcore.app.internal.assets.10.0.9.nupkg.sha512"
+  ],
+  "logs": []
+}

@@ -1,0 +1,90 @@
+﻿@page "/direct-login"
+@using Unidir.AuthenticationApi.Models
+@using Unidir.AuthenticationApi
+
+@inject IConfiguration Config
+@rendermode InteractiveServer
+@inject AuthenticationApiClient AuthClient
+@inject NavigationManager NavManager
+
+<h3>Direct Login (Server-Side Credential Exchange)</h3>
+
+<p>This flow mirrors the exact mechanics documented in `unidir-next-client/credentialLoginHandler.ts`. It securely POSTs credentials directly to the `/login` endpoint on the backend, intercepts all sequential Server-to-Server redirects, checks the `state`, and seamlessly exchanges the encapsulated authorization code. The browser never sees the intermediate steps.</p>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <EditForm Model="LoginModel" OnValidSubmit="HandleLogin" FormName="DirectLoginForm">
+            <div class="mb-3">
+                <label class="form-label">Email / Username</label>
+                <InputText class="form-control" @bind-Value="LoginModel.Username" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Password</label>
+                <InputText type="password" class="form-control" @bind-Value="LoginModel.Password" />
+            </div>
+            <button type="submit" class="btn btn-warning fw-bold" disabled="@IsLoading">
+                @if (IsLoading)
+                {
+                    <span>Authenticating Backend Flow...</span>
+                }
+                else
+                {
+                    <span>Direct Login (POST /login)</span>
+                }
+            </button>
+        </EditForm>
+    </div>
+</div>
+
+@if (!string.IsNullOrEmpty(AccessToken))
+{
+    <div class="alert alert-success mt-4 shadow-sm">
+        <h5 class="alert-heading">Successfully Authenticated and Tokenized!</h5>
+        <small style="word-break: break-all; opacity: 0.85;">@AccessToken</small>
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(ErrorMessage))
+{
+    <div class="alert alert-danger mt-4 shadow-sm">
+        <strong>Error Encountered:</strong> @ErrorMessage
+    </div>
+}
+
+@code {
+    public DirectLoginRequest LoginModel { get; set; } = new DirectLoginRequest
+    {
+       
+    };
+
+    public string? AccessToken { get; set; }
+    public string? ErrorMessage { get; set; }
+    public bool IsLoading { get; set; }
+
+    protected override void OnInitialized()
+    {
+        LoginModel.RedirectUri = NavManager.BaseUri + "callback";
+        LoginModel.ClientId = Config["UnidirOAuth:ClientId"] ?? "";
+    }
+
+    private async Task HandleLogin()
+    {
+        IsLoading = true;
+        ErrorMessage = null;
+        AccessToken = null;
+
+        try
+        {
+            var response = await AuthClient.LoginWithCredentialsAsync(LoginModel);
+            AccessToken = response.AccessToken;
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+}

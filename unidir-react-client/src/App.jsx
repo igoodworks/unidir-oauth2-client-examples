@@ -51,14 +51,47 @@ function App() {
   }
 
   // 3. Unauthenticated View (Login Page)
+  const handleDirectLogin = (e) => {
+    e.preventDefault();
+    const email = e.target.email.value;
+    const password = e.target.password.value;
+    login({ email, password }).catch(err => {
+      alert("Login failed: " + err.message);
+    });
+  };
+
   return (
     <div style={styles.container}>
       <div style={styles.card}>
-        <h1>MCPUniDir</h1>
-        <p>Please sign in to access your account.</p>
-        <button onClick={login} style={styles.loginBtn}>
-          Sign in with UniDir
-        </button>
+        <h1>MCPUniDir Direct Login</h1>
+        <p>Sign in via the background authentication flow.</p>
+        
+        <form onSubmit={handleDirectLogin} style={styles.form}>
+          <input 
+            type="email" 
+            name="email" 
+            required 
+            placeholder="john.doe@goodwork.com" 
+            style={styles.input} 
+          />
+          <input 
+            type="password" 
+            name="password" 
+            required 
+            placeholder="Password" 
+            style={styles.input} 
+          />
+          <button type="submit" style={styles.loginBtn}>
+            Sign In Directly
+          </button>
+        </form>
+
+        <div style={{ marginTop: '20px', fontSize: '14px' }}>
+          <p>Or use the standard hosted UI:</p>
+          <button onClick={() => login()} style={{ ...styles.loginBtn, backgroundColor: '#6c757d', marginTop: '10px' }}>
+            Sign in with Hosted UI
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -108,6 +141,21 @@ const styles = {
     border: "none",
     borderRadius: "4px",
     cursor: "pointer",
+    width: "100%",
+  },
+  form: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px",
+    maxWidth: "300px",
+    margin: "20px auto",
+  },
+  input: {
+    padding: "10px",
+    fontSize: "16px",
+    borderRadius: "4px",
+    border: "1px solid #ccc",
+    color: "#333",
   },
   logoutBtn: {
     padding: "8px 16px",

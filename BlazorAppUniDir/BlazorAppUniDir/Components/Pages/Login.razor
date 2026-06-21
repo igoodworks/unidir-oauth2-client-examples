@@ -1,0 +1,41 @@
+﻿@page "/login"
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@using System.Security.Cryptography
+@using Microsoft.AspNetCore.WebUtilities
+
+@rendermode InteractiveServer
+@inject NavigationManager NavManager
+@inject IConfiguration Config
+@inject ProtectedSessionStorage ProtectedSessionStore
+
+<h3>Login (Authorization Code + PKCE)</h3>
+
+<p>Click the button below to sign in via the Unidir Hosted UI using the fully secure Authorization Code grant type with PKCE support.</p>
+
+<button class="btn btn-primary" @onclick="GoToLogin">Login with Unidir</button>
+
+@code {
+    private async Task GoToLogin()
+    {
+        var baseUrl = Config["UnidirOAuth:BaseUrl"] ?? "https://oauth.igoodworks.com/oauth/v1/";
+        var clientId = Config["UnidirOAuth:ClientId"] ?? ""; // Replace with actual Client ID
+        var redirectUri = NavManager.BaseUri + "callback";
+
+        // Generate State & PKCE values
+        var state = Guid.NewGuid().ToString("N");
+        var codeVerifierBytes = new byte[32];
+        RandomNumberGenerator.Fill(codeVerifierBytes);
+        var codeVerifier = WebEncoders.Base64UrlEncode(codeVerifierBytes);
+
+        using var sha256 = SHA256.Create();
+        var codeChallengeBytes = sha256.ComputeHash(System.Text.Encoding.ASCII.GetBytes(codeVerifier));
+        var codeChallenge = WebEncoders.Base64UrlEncode(codeChallengeBytes);
+
+        // Storing State and Verifier in the interactive protected browser session storage
+        await ProtectedSessionStore.SetAsync("oauth_state", state);
+        await ProtectedSessionStore.SetAsync("oauth_verifier", codeVerifier);
+
+        var authUrl = $"{baseUrl}authorize?client_id={clientId}&response_type=code&redirect_uri={redirectUri}&scope=openid profile email&state={state}&code_challenge={codeChallenge}&code_challenge_method=S256";
+        NavManager.NavigateTo(authUrl);
+    }
+}

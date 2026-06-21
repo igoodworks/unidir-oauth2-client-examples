@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import UniDirClient from '@unidir/unidir-spa-js';
 import { BehaviorSubject, filter, map, Observable } from 'rxjs';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -14,12 +15,14 @@ export class AuthService {
 
   constructor(private router: Router) {
     this.unidir = new UniDirClient({
-      domain: 'http://localhost/oauth/v1', // Replace with your UniDir URL
-      clientId: 'sie8L2Vn9gViZmCCdRYuw72b4J93m5kI',
+      domain: environment.domain,
+      clientId: environment.clientId,
       redirectUri: window.location.origin + '/callback',
       logoutRedirectUri: window.location.origin,
       deviceId: this.getDeviceId(),
-      jwks: 'https://oauth.biocloud.pro/jwks.json', //'http://localhost/jwks.json',
+      jwks: environment.jwks,
+      scope: 'hr:admin openId profile email',
+      useDPoP: true,
     });
 
     this.init();
@@ -48,7 +51,7 @@ export class AuthService {
             const r = (Math.random() * 16) | 0;
             const v = c === 'x' ? r : (r & 0x3) | 0x8;
             return v.toString(16);
-          }
+          },
         );
       }
 
@@ -68,7 +71,7 @@ export class AuthService {
         window.history.replaceState(
           {},
           document.title,
-          window.location.pathname
+          window.location.pathname,
         );
       }
 
@@ -87,7 +90,7 @@ export class AuthService {
   get isAuthenticated$(): Observable<boolean> {
     return this.authState$.pipe(
       filter((val) => val !== null), // Wait until init is done
-      map((val) => !!val)
+      map((val) => !!val),
     );
   }
 
@@ -96,8 +99,11 @@ export class AuthService {
   }
 
   // Actions
-  login() {
-    this.unidir.loginWithRedirect();
+  async login(opts?: { email?: string; password?: string }) {
+    await this.unidir.loginWithRedirect(opts);
+    if (opts?.email && opts?.password) {
+      this.authState$.next(true);
+    }
   }
   logout() {
     this.unidir.logout();
@@ -107,5 +113,8 @@ export class AuthService {
   }
   async getIdToken() {
     return await this.unidir.getIdToken();
+  }
+  async getJKT() {
+    return await this.unidir.getJKT();
   }
 }

@@ -5,6 +5,12 @@
     <div class="dashboard-card">
       <h3>Your Access Token:</h3>
       <code>{{ accessToken }}</code>
+
+      <div *ngIf="jkt" class="dpop-card">
+        <h3>✅ DPoP Bound</h3>
+        <p>This session is cryptographically bound to your browser keys.</p>
+        <code class="small">{{ jkt }}</code>
+      </div>
     </div>
     <div class="success-box">
       <button class="btn-secondary" (click)="onLogout()">Logout</button>

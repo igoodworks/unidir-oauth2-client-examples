@@ -10,13 +10,12 @@ import { AuthService } from './services/auth.service';
   imports: [CommonModule, RouterOutlet],
   template: `
     <div *ngIf="!(auth.isInitialized$ | async); else appContent">
-      <p>Initializing Authentication...</p>
+      <div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+         <p>Initializing Authentication...</p>
+      </div>
     </div>
 
     <ng-template #appContent>
-      <nav *ngIf="!(auth.isAuthenticated$ | async)">
-        <button (click)="auth.login()">Login with UniDir</button>
-      </nav>
       <router-outlet></router-outlet>
     </ng-template>
   `,

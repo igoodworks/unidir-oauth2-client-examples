@@ -7,7 +7,6 @@ import Link from "next/link";
 
 export default function HomePage() {
   const { user, isLoading } = useUser();
-  console.log("Library Export Check:", user);
   return (
     <div className="text-center">
       <h1 className="text-4xl font-bold">UniDir Auth Demo</h1>
@@ -17,12 +16,12 @@ export default function HomePage() {
       ) : user ? (
         <div className="mt-4">
           <p className="mb-4">Logged in as **{user.email}**</p>
-          <Link
+          <a
             href="/api/auth/logout"
             className="text-red-500 underline hover:text-red-700 transition-colors"
           >
             Logout
-          </Link>
+          </a>
         </div>
       ) : (
         <div className="mt-4">

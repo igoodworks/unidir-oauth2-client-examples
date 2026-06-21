@@ -1,16 +1,17 @@
 import { inject } from '@angular/core';
-import { CanActivateFn } from '@angular/router';
+import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
-import { map, skipWhile, take } from 'rxjs';
+import { map, take } from 'rxjs';
 
 export const authGuard: CanActivateFn = () => {
   const auth = inject(AuthService);
+  const router = inject(Router);
 
   return auth.isAuthenticated$.pipe(
     take(1),
     map((isAuth) => {
       if (isAuth) return true;
-      auth.login(); // Redirect to UniDir if not logged in
+      router.navigate(['/login']); // Show local login page instead of auto-hosted UI
       return false;
     })
   );

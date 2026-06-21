@@ -6,7 +6,6 @@ interface DashboardProps {
   user: UniDirUser;
 }
 async function DashboardPage({ user }: DashboardProps) {
-  console.log("user ===>", user);
   return (
     <div className="bg-white p-6 rounded shadow">
       <h1 className="text-2xl font-bold mb-4">Secure Server Dashboard</h1>

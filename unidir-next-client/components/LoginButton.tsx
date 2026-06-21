@@ -5,9 +5,13 @@ import { getDeviceId } from "@unidir/unidir-nextjs/client";
 export default function LoginButton() {
   const handleLogin = () => {
     const deviceId = getDeviceId();
-    // Pass the client-side ID to the login API
-    window.location.href = `/api/auth/login?device_id=${deviceId}`;
+    // Route to the new custom login page, passing the device_id
+    window.location.href = `/login?device_id=${deviceId}`;
   };
 
-  return <button onClick={handleLogin}>Login</button>;
+  return (
+    <button className="cursor-pointer" onClick={handleLogin}>
+      Login
+    </button>
+  );
 }

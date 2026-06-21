@@ -38,7 +38,7 @@ export const UniDirProvider = ({ children, config }) => {
         const idToken = await client.getIdToken();
         const expireAt = await client.getExpireAt();
         const jkt = await client.getJKT();
-        console.log("idToken", idToken, expireAt, jkt);
+
         if (accessToken) {
           setIsAuthenticated(true);
           const { sub, name, email, picture, email_verified, role } = idToken;
@@ -59,7 +59,17 @@ export const UniDirProvider = ({ children, config }) => {
     user,
     isAuthenticated,
     loading,
-    login: () => client.loginWithRedirect(),
+    login: async (opts) => {
+      await client.loginWithRedirect(opts);
+      if (opts?.email && opts?.password) {
+        // Direct login bypasses redirect; update state immediately
+        const idToken = await client.getIdToken();
+        const jkt = await client.getJKT();
+        const { sub, name, email, picture, email_verified, role } = idToken;
+        setUser({ sub, name, email, picture, email_verified, role, jkt });
+        setIsAuthenticated(true);
+      }
+    },
     logout: () => client.logout(),
   };
 

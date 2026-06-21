@@ -1,0 +1,108 @@
+﻿@page "/callback"
+@using Unidir.AuthenticationApi
+@using Unidir.AuthenticationApi.Models
+@using Microsoft.AspNetCore.WebUtilities
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+
+@rendermode InteractiveServer
+
+@inject AuthenticationApiClient AuthClient
+@inject NavigationManager NavManager
+@inject ProtectedSessionStorage ProtectedSessionStore
+@inject IConfiguration Config
+
+<h3>OAuth2 Callback Sample (PKCE enabled)</h3>
+
+@if (!string.IsNullOrEmpty(AccessToken))
+{
+    <div class="alert alert-success mt-3">
+        <strong>Successfully retrieved Token:</strong>
+        <br/> <small style="word-break:break-all;">@AccessToken</small>
+    </div>
+}
+else if (!string.IsNullOrEmpty(ErrorMessage))
+{
+    <div class="alert alert-danger mt-3">
+        <strong>Error:</strong> @ErrorMessage
+    </div>
+}
+else
+{
+    <p>Processing Authentication (Validating PKCE and State)...</p>
+}
+
+@code {
+    public string? AccessToken { get; set; }
+    public string? ErrorMessage { get; set; }
+
+    private AuthorizationCodeTokenRequest tokenRequest = new AuthorizationCodeTokenRequest();
+
+    protected override void OnInitialized()
+    {
+        tokenRequest.RedirectUri = NavManager.BaseUri + "callback";
+        tokenRequest.ClientId = Config["UnidirOAuth:ClientId"] ?? "";
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var uri = NavManager.ToAbsoluteUri(NavManager.Uri);
+            var queryStrings = QueryHelpers.ParseQuery(uri.Query);
+
+            if (queryStrings.TryGetValue("code", out var codeValues))
+            {
+                var authorizationCode = codeValues.First()??"";
+
+                string? storedState = null;
+                string? storedVerifier = null;
+
+                try
+                {
+                    var stateResult = await ProtectedSessionStore.GetAsync<string>("oauth_state");
+                    storedState = stateResult.Success ? stateResult.Value : null;
+                    var verifierResult = await ProtectedSessionStore.GetAsync<string>("oauth_verifier");
+                    storedVerifier = verifierResult.Success ? verifierResult.Value : null;
+                }
+                catch { }
+
+                if (queryStrings.TryGetValue("state", out var stateValues))
+                {
+                    var returnedState = stateValues.First();
+                    if (storedState != returnedState)
+                    {
+                        ErrorMessage = "State validation failed! The state received does not match the generated state.";
+                        StateHasChanged();
+                        return;
+                    }
+                }
+
+                try
+                {
+                    // var tokenRequest = new AuthorizationCodeTokenRequest
+                    // {
+                    //     ClientId = Config["Unidir:ClientId"] ?? "",
+                    //     Code = authorizationCode,
+                    //     RedirectUri = NavManager.BaseUri + "callback",
+                    //     CodeVerifier = storedVerifier
+                    // };
+                    tokenRequest.Code = authorizationCode;
+                    tokenRequest.CodeVerifier = storedVerifier;
+
+                    // Request the token using the SDK
+                    var response = await AuthClient.GetTokenAsync(tokenRequest);
+                    AccessToken = response.AccessToken;
+                }
+                catch (Exception ex)
+                {
+                    ErrorMessage = ex.Message;
+                }
+                StateHasChanged();
+            }
+            else
+            {
+                ErrorMessage = "No authorization code found in the query parameters. Ensure you navigated here with ?code=XYZ";
+                StateHasChanged();
+            }
+        }
+    }
+}

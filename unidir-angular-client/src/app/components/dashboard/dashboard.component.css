@@ -13,6 +13,26 @@
   text-align: center;
   max-width: 400px;
 }
+
+.dpop-card {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #e8f5e9;
+  border: 1px solid #c8e6c9;
+  border-radius: 8px;
+  color: #2e7d32;
+}
+
+.dpop-card h3 {
+  margin-top: 0;
+  font-size: 1.1em;
+}
+
+.small {
+  font-size: 0.8em;
+  word-break: break-all;
+}
+
 .dashboard-card code {
   white-space: pre-wrap; /* Maintains formatting but allows wrapping */
   word-break: break-all; /* Forces the string to break at any character */
